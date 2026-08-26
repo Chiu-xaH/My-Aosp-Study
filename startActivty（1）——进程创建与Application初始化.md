@@ -1,10 +1,10 @@
-# AOSP 学习：startActivty（1）
+# Android 学习记录：startActivty（1）——进程创建与Application初始化
 
-<span style="color:#080808;">startActivty（1）只到Application.onCreate，后续的start首个Activity在 </span>[AOSP 学习：startActivty（2）]()<span style="color:#080808;"> </span>
+<span style="color:#080808;">startActivty（1）只到Application.onCreate，后续的start首个Activity在</span>[startActivty（2）——Activity](/startActivty（2）——启动首个Activity.md) 
 
 ## <span style="color:#080808;">顺序图</span>
 
-![图片](./SequenceDiagram1.png)
+![图片](/AMS-2.png)
 
 ## <span style="color:#080808;">流程概述</span>
 
@@ -69,13 +69,6 @@ final boolean resumeTopActivity(ActivityRecord prev, ActivityOptions options,
             ...
         }
         ...
-        if (next.attachedToProcess()) {
-            ...
-        } else {
-            ...
-            // 创建Activity，下一篇幅的入口点
-            mTaskSupervisor.startSpecificActivity(next, true, true);
-        }
         return true;
     }
 ```
@@ -179,7 +172,7 @@ private Process.ProcessStartResult attemptZygoteSendArgsAndGetResult(
 
 ### Step5
 
-Zygote这边，从Init进程到启动Zygote之后，就一直处于runSelectLoop，死循环轮询消息到达并处理（具体见Zygote篇幅 [AOSP 学习：Init进程到首次Zygote - 云文档]() ）。消息到达时调用acceptCommandPeer新建ZygoteConnction，然后调用processCommand处理，processCommand调用到native层的Zygote进行fork并返回pid到processCommand内，根据pid对子进程进行一些处理例如关闭Socket等，处理完成后继续调用childZygoteInit进而调用findStaticMain方法，按照传入的参数（还记得entryPoint吗，android.app.ActivityThread）反射创建ActivityThread并调用它的main方法。
+Zygote这边，从Init进程到启动Zygote之后，就一直处于runSelectLoop，死循环轮询消息到达并处理（具体见Zygote篇幅[AOSP 学习：Android启动（2）——Zygote](/系统启动（2）——Zygote.md)）。消息到达时调用acceptCommandPeer新建ZygoteConnction，然后调用processCommand处理，processCommand调用到native层的Zygote进行fork并返回pid到processCommand内，根据pid对子进程进行一些处理例如关闭Socket等，处理完成后继续调用zygoteInit进而调用findStaticMain方法，按照传入的参数（还记得entryPoint吗，android.app.ActivityThread）反射创建ActivityThread并调用它的main方法。
 
 ```java
 Runnable runSelectLoop(String abiList) {
@@ -308,12 +301,11 @@ private Runnable handleChildProc(ZygoteArguments parsedArgs,
             ...
         } else {
             if (!isZygote) {
-               // 这里是首次启动时走的，可以看Zygote启动的篇幅
+               // 走这里，更多详细信息可以看Zygote启动的篇幅
                 return ZygoteInit.zygoteInit(parsedArgs.mTargetSdkVersion,
                         parsedArgs.mDisabledCompatChanges,
                         parsedArgs.mRemainingArgs, null /* classLoader */);
             } else {
-              // 本次走这里
                 return ZygoteInit.childZygoteInit(
                         parsedArgs.mRemainingArgs  /* classLoader */);
             }
@@ -322,10 +314,20 @@ private Runnable handleChildProc(ZygoteArguments parsedArgs,
 ```
 
 ```java
-static Runnable childZygoteInit(String[] argv) {
-  	RuntimeInit.Arguments args = new RuntimeInit.Arguments(argv);
-  	return RuntimeInit.findStaticMain(args.startClass, args.startArgs, /* classLoader= */null);
-}
+public static Runnable zygoteInit(int targetSdkVersion, long[] disabledCompatChanges,
+            String[] argv, ClassLoader classLoader) {
+       ...
+         // 处理native层进程信息初始化
+        ZygoteInit.nativeZygoteInit();
+  		// 进而调用到findStaticMain
+        return RuntimeInit.applicationInit(targetSdkVersion, disabledCompatChanges, argv,
+                classLoader);
+    }
+
+protected static Runnable applicationInit(int targetSdkVersion, long[] disabledCompatChanges,
+        ...
+        return findStaticMain(args.startClass, args.startArgs, classLoader);
+    }
 
 protected static Runnable findStaticMain(String className, String[] argv,
             ClassLoader classLoader) {
@@ -344,7 +346,7 @@ protected static Runnable findStaticMain(String className, String[] argv,
 
 ### <span style="color:#080808;">Step6</span>
 
-<span style="color:#080808;">到了ActivityThread的main函数，主要就是初始化一些东西，例如prepareMainLooper，然后new一个ActivityThread并调用它的attath方法，进而调用AMS的attachApplication方法，流转到attachApplicationLocked方法，先调用ApplicationThread的bindApplication，完成Application的构建，再调用finishAttachApplicationInner开启第一个Activity（下一篇幅 </span>[AOSP 学习：startActivty（2） - 云文档]()<span style="color:#080808;">  讲）。</span>
+<span style="color:#080808;">到了ActivityThread的main函数，主要就是初始化一些东西，例如prepareMainLooper，然后new一个ActivityThread并调用它的attath方法，进而调用AMS的attachApplication方法，流转到attachApplicationLocked方法，先调用ApplicationThread的bindApplication，完成Application的构建，再向下走，调用attachApplication开启第一个Activity（下一篇幅 </span>[AOSP 学习：startActivty（2） - 云文档](/startActivty（2）——启动首个Activity.md)<span style="color:#080808;">  讲）。</span>
 
 ```java
 public static void main(String[] args) {
@@ -372,16 +374,14 @@ public static void main(String[] args) {
                 thread.bindApplication(...);
             }
            ...
-            if (!mConstants.mEnableWaitForFinishAttachApplication) {
-              // 启动Activity
-                finishAttachApplicationInner(startSeq, callingUid, pid);
+      			if (com.android.server.am.Flags.expediteActivityLaunchOnColdStart()) {
+                if (normalMode) {
+             			 // 启动Activity 见下一篇幅
+                    mAtmInternal.attachApplication(app.getWindowProcessController());
+                }
             }
       			...
-        } catch (Exception e) {
-           ...
-        }
     }
-
 ```
 
 ### <span style="color:#080808;">Step7</span>
@@ -577,3 +577,15 @@ public @NonNull Application instantiateApplication(@NonNull ClassLoader cl,
   return (Application) cl.loadClass(className).newInstance();
     }
 ```
+
+## <span style="color:#080808;">压缩</span>
+
+<span style="color:#080808;">ATMS做先序校验，并转换为ActivityRecord。</span>
+
+<span style="color:#080808;">TaskFragment检查进程是否创建，如无则通过Handler通知AMS需要创建进程。</span>
+
+<span style="color:#080808;">AMS流转到ProcessList中，定义entryPoint为ActivityThread类名，并将其传递给Zygote。</span>
+
+<span style="color:#080808;">Zygote发送端组装传递参数，然后通过socket通信发送消息要求fork进程并返回pid，Zygote接收端在runSelectLoop轮询中接收到消息并处理，调用Native层fork子进程并对其进行一些处理例如关闭socket等，然后调用childZygoteInit进而调用findStaticMain方法，根据传入的entryPoint反射创建ActivityThread并调用它的main方法。</span>
+
+<span style="color:#080808;">在ActivityThread的main方法中初始化一些事务例如prepareMainLooper，然后调用自身的attach方法进而调用到ApplicationThread的bindApplication完成Application的创建和调用onCreate，通过清单文件配置的name字段反射创建，完成后就继续走attach方法，调用attachApplication方法进而开始创建第一个Activity。</span>
