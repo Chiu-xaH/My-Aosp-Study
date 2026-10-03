@@ -34,13 +34,17 @@
 
 ![](/GUI-2-Surface.png)
 
-- [显示（3）——View 绘制]()
+- [显示（3）——View 绘制——软件绘制]()
 > 图画好，内容预计2026-10完成
 
-![](/GUI-3-View.png)
+![](/GUI-3-View-DrawSoftware.png)
 
-- [显示（4）——SurfaceFlinger]()
-> 预计2026-09完成
+- [显示（4）——View 绘制——硬件绘制]()
+> 图画好，内容预计2026-10完成
 
-- [显示（5）——SurfaceFlinger 合成]()
-> 预计2026-09完成
+![](/GUI-4-View-DrawHardware.png)
+
+- [显示（5）——SurfaceFlinger]()
+> 预计2026-10完成
+
+![](/GUI-5-SurfaceFlinger.png)
