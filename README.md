@@ -2,7 +2,7 @@
 > 基于aosp的android-16.0.0-r4分支，等写完了文档一起放出来，现在先放时序图
 
 - [系统启动（1）——Init 进程]() 
-> 预计2026-09完成
+> 预计2026-10完成
 
 - [系统启动（2）——Zygote](/系统启动（2）——Zygote.md) √
 
@@ -25,24 +25,21 @@
 ![](/AMS-2-Activity.png)
 
 - [显示（1）——VSync](/显示（1）——%20VSync.md)
-> 图画好，内容预计2026-09完成
 
 ![](/GUI-1-VSync.png)
 
 - [显示（2）——Surface]()
-> 图画好，内容预计2026-09完成
 
 ![](/GUI-2-Surface.png)
 
 - [显示（3）——View 绘制——软件绘制]()
-> 图画好，内容预计2026-10完成
 
-![](/GUI-3-View-DrawSoftware.png)
+![](/GUI-3-View-SoftwareDraw.png)
 
 - [显示（4）——View 绘制——硬件绘制]()
-> 图画好，内容预计2026-10完成
+> 预计2026-10完成
 
-![](/GUI-4-View-DrawHardware.png)
+![](/GUI-4-View-HardwareDraw.png)
 
 - [显示（5）——SurfaceFlinger]()
 > 预计2026-10完成
