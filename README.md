@@ -12,10 +12,6 @@
 
 ![](/System-3-SystemServer.png)
 
-- [系统启动（4）——Launcher 应用](/系统启动（4）——Launcher.md) √
-
-![](/System-4-Launcher.png)
-
 - [startActivity（1）——进程创建与 Application 初始化](/startActivty（1）——进程创建与Application初始化.md) √
 
 ![](/AMS-1-Application.png)
