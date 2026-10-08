@@ -38,6 +38,5 @@
 ![](/GUI-4-View-HardwareDraw.png)
 
 - [显示（5）——SurfaceFlinger]()
-> 预计2026-10完成
 
 ![](/GUI-5-SurfaceFlinger.png)
