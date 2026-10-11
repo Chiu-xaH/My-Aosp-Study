@@ -1,8 +1,9 @@
 # 目录
-> 基于aosp的android-16.0.0-r4分支，等写完了文档一起放出来，现在先放时序图
+> 基于`android-16.0.0-r4`分支，等写完了文档一起放出来，现在先放最重要的顺序图，[UML.mdj](/UML.mdj)可以用[StarUML](https://github.com/X1a0He/StarUML-CrackedAndTranslate)打开
 
-- [系统启动（1）——Init 进程]() 
-> 预计2026-10完成
+- [系统启动（1）——Init 进程]() 预计2026-10完成
+
+![](/System-1-Init.png)
 
 - [系统启动（2）——Zygote](/系统启动（2）——Zygote.md) √
 
@@ -20,23 +21,22 @@
 
 ![](/AMS-2-Activity.png)
 
-- [显示（1）——VSync](/显示（1）——%20VSync.md)
+- [显示（1）——VSync](/显示（1）——%20VSync.md) √
 
 ![](/GUI-1-VSync.png)
 
-- [显示（2）——Surface]()
+- [显示（2）——Surface]() √
 
 ![](/GUI-2-Surface.png)
 
-- [显示（3）——View 绘制——软件绘制]()
+- [显示（3）——View 绘制——软件绘制]() √
 
 ![](/GUI-3-View-SoftwareDraw.png)
 
-- [显示（4）——View 绘制——硬件绘制]()
-> 预计2026-10完成
+- [显示（4）——View 绘制——硬件绘制]() 预计2026-10完成
 
 ![](/GUI-4-View-HardwareDraw.png)
 
-- [显示（5）——SurfaceFlinger]()
+- [显示（5）——SurfaceFlinger]() √
 
 ![](/GUI-5-SurfaceFlinger.png)
