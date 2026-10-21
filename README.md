@@ -33,7 +33,7 @@
 
 ![](/GUI-3-View-SoftwareDraw.png)
 
-- [显示（4）——View 绘制——硬件绘制]() 预计2026-10完成
+- [显示（4）——View 绘制——硬件绘制]() √
 
 ![](/GUI-4-View-HardwareDraw.png)
 
