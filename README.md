@@ -40,3 +40,8 @@
 - [显示（5）——SurfaceFlinger]() √
 
 ![](/GUI-5-SurfaceFlinger.png)
+
+
+- [触摸 ——Input]() 预计2026-11完成
+
+![](/Input.png)
